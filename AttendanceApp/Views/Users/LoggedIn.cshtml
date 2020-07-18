@@ -1,0 +1,30 @@
+﻿
+@{
+    ViewData["Title"] = "LoggedIn";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+
+<fieldset>
+    <legend>
+
+        @if (@HttpContextAccessor.HttpContext.Session.GetString("UserId") != null)
+        {
+            <text>
+                Welcome! @HttpContextAccessor.HttpContext.Session.GetString("Username").ToString()
+            </text>
+            <a asp-action="Logout">Log Out</a>
+            <a asp-action="Index">View Employees</a>
+        }
+        else
+        {
+            <text>
+                Welcome!
+            </text>
+            <a asp-action="ViewRegister">Register New</a>
+            <a asp-action="ViewLogin">Log in</a>
+        }
+    </legend>
+</fieldset>
+
