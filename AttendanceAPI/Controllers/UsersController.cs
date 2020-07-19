@@ -58,10 +58,6 @@ namespace AttendanceAPI.Controllers
             }
         }
 
-
-
-
-        // Post api/user
         [HttpPost("register")]
         public async Task<ActionResult> Register(UserRegisterViewModel user)
         {
@@ -87,13 +83,13 @@ namespace AttendanceAPI.Controllers
                 return BadRequest("Not a Valid Model");
             }
         }
-        
-        // GET api/users
+
         [HttpGet]
         public ActionResult<List<UserData>> Get()
         {
             return _context.Users.Select(u => new UserData
             {
+                UserId = u.UserId,
                 Username = u.Username,
                 FirstName = u.FirstName,
                 LastName = u.LastName,
@@ -105,12 +101,12 @@ namespace AttendanceAPI.Controllers
             }).ToList() ;
         }
 
-        // GET api/users
         [HttpGet("department/{Department}")]
         public ActionResult<List<UserData>> GetDepartment(string Department)
         {
             return _context.Users.Where(u => u.Department == Department).Select(u => new UserData
             {
+                UserId = u.UserId,
                 Username = u.Username,
                 FirstName = u.FirstName,
                 LastName = u.LastName,
@@ -121,13 +117,13 @@ namespace AttendanceAPI.Controllers
                 isDepartmentAdmin = u.isDepartmentAdmin
             }).ToList();
         }
-
-        // GET api/users
+        
         [HttpGet("user/{username}")]
         public ActionResult<List<UserData>> Getid(string username)
         {
             return _context.Users.Where(u => u.Username.Equals(username)).Select(u => new UserData
             {
+                UserId = u.UserId,
                 Username = u.Username,
                 FirstName = u.FirstName,
                 LastName = u.LastName,
@@ -137,6 +133,43 @@ namespace AttendanceAPI.Controllers
                 isAdmin = u.isAdmin,
                 isDepartmentAdmin = u.isDepartmentAdmin
             }).ToList();
+        }
+        
+        [HttpGet("userdetails/{userid}")]
+        public ActionResult<Tuple<User, int>> Getdetails(string userid)
+        {
+            User user_ =  _context.Users.Where(u => u.UserId == Int32.Parse(userid)).Select(u => new User
+            {
+                UserId = u.UserId,
+                Username = u.Username,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Email = u.Email,
+                Department = u.Department,
+                weeklyHours = u.weeklyHours,
+                isAdmin = u.isAdmin,
+                isDepartmentAdmin = u.isDepartmentAdmin,
+                Logs = u.Logs
+            }).FirstOrDefault<User>();
+            var missing = 0;
+            foreach(var log in user_.Logs)
+            {
+                if(log.LoginTime.Month == DateTime.Now.Month)
+                {
+                    if(log.Holiday==true || log.LeaveDay == true)
+                    {
+                        missing += 480;
+                    }
+                    else
+                    {
+                        TimeSpan span = log.LogoutTime.Subtract(log.LoginTime);
+                        missing += Convert.ToInt32(span.TotalMinutes);
+                    }
+                }
+            }
+            missing = missing / 60;
+            missing = (user_.weeklyHours*4) - missing;
+            return Tuple.Create(user_, missing);
         }
 
     }

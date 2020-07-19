@@ -19,8 +19,7 @@ namespace AttendanceAPI.Controllers
         {
             _context = context;
         }
-
-        // Post api/UserLog
+        
         [HttpPost("open")]
         public async Task<ActionResult> OpenSession(UserLog userlog)
         {
@@ -45,8 +44,7 @@ namespace AttendanceAPI.Controllers
                 return BadRequest("Not a Valid Model");
             }
         }
-
-        // Post api/UserLog
+        
         [HttpPut("close")]
         public async Task<ActionResult> CloseSession(UserLog userlog)
         {
@@ -63,6 +61,42 @@ namespace AttendanceAPI.Controllers
                 ModelState.AddModelError("", "Some Error Occured!");
                 return BadRequest("Session Not Found");
             }
+        }
+        
+        [HttpPut("edit")]
+        public async Task<ActionResult> EditSession(UserLog userlog)
+        {
+            var logs_ = await _context.UserLogs.SingleOrDefaultAsync(u => u.UserLogId == userlog.UserLogId);
+            if (logs_ != null)
+            {
+                logs_.LoginTime = userlog.LoginTime;
+                logs_.LogoutTime = userlog.LogoutTime;
+                logs_.LeaveDay = userlog.LeaveDay;
+                logs_.Holiday = userlog.Holiday;
+                logs_.Status = userlog.Status;
+                _context.SaveChanges();
+                return Ok();
+            }
+            else
+            {
+                ModelState.AddModelError("", "Some Error Occured!");
+                return BadRequest("Session Not Found");
+            }
+        }
+
+        [HttpGet("userlog/{userlogid}")]
+        public ActionResult<UserLog> GetSession(string userlogid)
+        {
+            return _context.UserLogs.Where(u => u.UserLogId == Int32.Parse(userlogid)).Select(u => new UserLog
+            {
+                UserLogId = u.UserLogId,
+                UserId = u.UserId,
+                LoginTime = u.LoginTime,
+                LogoutTime = u.LogoutTime,
+                LeaveDay = u.LeaveDay,
+                Holiday = u.Holiday,
+                Status = u.Status
+        }).FirstOrDefault<UserLog>();
         }
     }
 }

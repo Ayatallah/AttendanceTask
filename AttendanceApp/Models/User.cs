@@ -24,6 +24,7 @@ namespace AttendanceApp.Models
         public bool isDepartmentAdmin { get; set; }
 
         public int weeklyHours { get; set; }
+        public int missing { get; set; }
 
         public ICollection<UserLog> Logs { get; set; }
     }

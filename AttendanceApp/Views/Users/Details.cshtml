@@ -1,0 +1,134 @@
+﻿@model AttendanceApp.Models.User
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+<h2>Details</h2>
+
+<div>
+    <h4>User</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.UserId)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UserId)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Username)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Username)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Password)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Password)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FirstName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.LastName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Department)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Department)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.isAdmin)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.isAdmin)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.isDepartmentAdmin)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.isDepartmentAdmin)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.weeklyHours)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.weeklyHours)
+        </dd>
+    </dl>
+</div>
+<div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Login Time
+                </th>
+                <th>
+                    Logout Time
+                </th>
+                <th>
+                    Leave Day
+                </th>
+                <th>
+                    Holiday
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Logs)
+            {
+                @if (item != null)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LoginTime)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LogoutTime)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LeaveDay)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Holiday)
+                        </td>
+                        <td>
+                            @if (@HttpContextAccessor.HttpContext.Session.GetString("isAdmin").Equals("True") || @HttpContextAccessor.HttpContext.Session.GetString("isDepartmentAdmin").Equals("True"))
+                            {
+                                @Html.ActionLink("Edit", "ShowEdit", "UserLogs", new { id = item.UserLogId })
+                                @Html.ActionLink("Create New", "ShowCreate", "UserLogs")
+                            }
+                            </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<div>
+    @Html.DisplayFor(model => model.Username)'s Missing Hours for current month: @Html.DisplayFor(model => model.missing)
+</div>
+<div>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    <a asp-action="Index">Back to List</a>
+</div>

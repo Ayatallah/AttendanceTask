@@ -1,0 +1,64 @@
+﻿@model AttendanceApp.Models.UserLog
+
+@{
+    ViewData["Title"] = "ShowEdit";
+}
+
+<h2>ShowEdit</h2>
+
+<h4>UserLog</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="UserLogId" class="control-label"></label>
+                <input asp-for="UserLogId"  id="UserLogId"  class="form-control" />
+                <span asp-validation-for="UserLogId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LoginTime" class="control-label"></label>
+                <input asp-for="LoginTime"  id="LoginTime" class="form-control" />
+                <span asp-validation-for="LoginTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LogoutTime" class="control-label"></label>
+                <input asp-for="LogoutTime" id="LogoutTime" class="form-control" />
+                <span asp-validation-for="LogoutTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Status" class="control-label"></label>
+                <input asp-for="Status" id=" Status" class="form-control" />
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input asp-for="LeaveDay" id="LeaveDay" /> @Html.DisplayNameFor(model => model.LeaveDay)
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input asp-for="Holiday" id="Holiday" /> @Html.DisplayNameFor(model => model.Holiday)
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserId" class="control-label"></label>
+                <input asp-for="UserId" class="form-control" />
+                <span asp-validation-for="UserId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    @Html.ActionLink("Back to List", "Index", "Users")
+</div>
+

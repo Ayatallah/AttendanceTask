@@ -1,0 +1,63 @@
+﻿@model AttendanceApp.Models.UserLog
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Create</h2>
+
+<h4>UserLog</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="UserLogId" class="control-label"></label>
+                <input asp-for="UserLogId" class="form-control" />
+                <span asp-validation-for="UserLogId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LoginTime" class="control-label"></label>
+                <input asp-for="LoginTime" class="form-control" />
+                <span asp-validation-for="LoginTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LogoutTime" class="control-label"></label>
+                <input asp-for="LogoutTime" class="form-control" />
+                <span asp-validation-for="LogoutTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Status" class="control-label"></label>
+                <input asp-for="Status" class="form-control" />
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input asp-for="LeaveDay" /> @Html.DisplayNameFor(model => model.LeaveDay)
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input asp-for="Holiday" /> @Html.DisplayNameFor(model => model.Holiday)
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserId" class="control-label"></label>
+                <input asp-for="UserId" class="form-control" />
+                <span asp-validation-for="UserId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+</div>
+

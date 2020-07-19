@@ -58,12 +58,50 @@ namespace AttendanceApp.Controllers
         {
             return View("Login");
         }
-
+        public IActionResult ViewSearch()
+        {
+            return View("Search");
+        }
         public IActionResult ViewRegister()
         {
             return View("Register");
         }
-        public async Task<ActionResult> Login(UserLoginViewModel user)
+
+        public async Task<ActionResult> Search(UserSearchViewModel user)
+        {
+            HttpClient client = _api.Initial();
+            var res = await client.GetAsync("api/users/user/" + user.Username);
+            _logger.LogInformation("SEARCHHHHHH:  " + user.Username);
+            if (res.IsSuccessStatusCode)
+            {
+                var result = res.Content.ReadAsStringAsync().Result;
+                UserData user_ = JsonConvert.DeserializeObject<List<UserData>>(result).FirstOrDefault();
+                _logger.LogInformation("GETTTTT:  " + result.ToString());
+                if(user_ != null)
+                {
+                    _logger.LogInformation("GETTTTT:  " + user_.ToString());
+
+                    if (HttpContext.Session.GetString("isAdmin").Equals("False"))
+                    {
+                        if (!HttpContext.Session.GetString("Department").Equals(user_.Department))
+                        {
+                            ModelState.AddModelError("Username", "No Users Found. Please try another username search.");
+                            _logger.LogInformation("User Found but in Different Department!");
+                            return View();
+                        }
+                    }
+                    return RedirectToAction("Details", new { id = user_.UserId });
+                }
+                else
+                {
+                    ModelState.AddModelError("Username", "No Users Found. Please try another username search.");
+                    _logger.LogInformation("UserNOTFounnd");
+                    return View();
+                }
+            }
+            return View("Index");
+        }
+            public async Task<ActionResult> Login(UserLoginViewModel user)
         {
             HttpClient client = _api.Initial();
             if (user != null)
@@ -124,11 +162,45 @@ namespace AttendanceApp.Controllers
             }
         }
 
+        public async Task<IActionResult> Details(int? id)
+        {
+            HttpClient client = _api.Initial();
+
+            _logger.LogInformation("DETAILSSSSSSSS:  " + id.ToString());
+            User user = new User();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var res = await client.GetAsync("api/users/userdetails/" + id.ToString());
+            if (res.IsSuccessStatusCode)
+            {
+                var result = res.Content.ReadAsStringAsync().Result;
+                Tuple<User, int> u = JsonConvert.DeserializeObject<Tuple<User, int>>(result);
+                user.UserId = u.Item1.UserId;
+                user.Username = u.Item1.Username;
+                user.FirstName = u.Item1.FirstName;
+                user.LastName = u.Item1.LastName;
+                user.Email = u.Item1.Email;
+                user.isAdmin = u.Item1.isAdmin;
+                user.isDepartmentAdmin = u.Item1.isDepartmentAdmin;
+                user.Department = u.Item1.Department;
+                user.weeklyHours = u.Item1.weeklyHours;
+                user.Logs = u.Item1.Logs;
+                user.missing = u.Item2;
+                if (user == null)
+                {
+                    return NotFound();
+                }
+            }
+            return View(user);
+        }
+
+
         public async Task<ActionResult> Register(UserRegisterViewModel user)
         {
             HttpClient client = _api.Initial();
-            //var postTask = await client.PostAsJsonAsync<UserRegisterViewModel>("api/users/register", user);
-            //postTask.Wait();
             var result = await client.PostAsJsonAsync<UserRegisterViewModel>("api/users/register", user);
             if(result.IsSuccessStatusCode)
             {
@@ -158,7 +230,6 @@ namespace AttendanceApp.Controllers
                 res = await client.GetAsync("api/users/user/" + HttpContext.Session.GetString("Username"));
                 _logger.LogInformation("GETTTTT:  " + HttpContext.Session.GetString("Username"));
             }
-            //res = await client.GetAsync("api/users");
             _logger.LogInformation("GETTTTT:  " + res.ToString());
             if (res.IsSuccessStatusCode)
             {

@@ -4,10 +4,16 @@
     ViewData["Title"] = "Index";
 }
 
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+
 <h2>Index</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    @if (@HttpContextAccessor.HttpContext.Session.GetString("isAdmin").Equals("True") || @HttpContextAccessor.HttpContext.Session.GetString("isDepartmentAdmin").Equals("True"))
+    {
+        <a asp-action="ViewSearch">Search</a>
+    }
 </p>
 <table class="table">
     <thead>
@@ -58,14 +64,12 @@
                         @Html.DisplayFor(modelItem => item.weeklyHours)
                     </td>
                     <td>
-                        @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                        @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                        @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                        @Html.ActionLink("Details", "Details", new { id = item.UserId })
                     </td>
                 </tr>
             }
         }
-        </tbody>
+    </tbody>
 </table>
 <div>
     <a asp-action="Logout">Log Out</a>
